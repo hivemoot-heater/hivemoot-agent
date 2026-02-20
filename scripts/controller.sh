@@ -195,7 +195,6 @@ spawn_worker() {
     --security-opt=no-new-privileges
     --read-only
     --tmpfs "/tmp:size=2g,mode=1777"
-    --tmpfs "/usr/local/share/npm-global:size=1g"
     --memory "${AGENT_MEMORY_LIMIT:-16g}"
     --cpus "${AGENT_CPU_LIMIT:-4.0}"
     --pids-limit "${AGENT_PIDS_LIMIT:-512}"
