@@ -1,5 +1,7 @@
 # hivemoot-agent
 
+[![Discord](https://img.shields.io/badge/Discord-Join-5865F2?logo=discord&logoColor=white)](https://discord.gg/QAAZpfR6)
+
 Run your Hivemoot team inside one Docker container.
 
 `hivemoot-agent` is the runtime that launches autonomous coding teammates against
