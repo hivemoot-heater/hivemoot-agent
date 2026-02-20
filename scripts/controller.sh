@@ -204,8 +204,11 @@ spawn_worker() {
   )
 
   # Mount codex subscription auth into the worker's home if available.
+  # Pre-create the .codex dir in the job home so Docker doesn't fail when
+  # resolving the file-mount target inside the /home/node bind-mount.
   local codex_auth_file="${CODEX_AUTH_FILE:-}"
   if [ -n "$codex_auth_file" ] && [ -f "$codex_auth_file" ]; then
+    mkdir -p "${job_home}/.codex"
     docker_run_args+=( -v "${codex_auth_file}:/home/node/.codex/auth.json:ro" )
   fi
 
