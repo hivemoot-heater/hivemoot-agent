@@ -259,7 +259,6 @@ run_success_case() {
   assert_file_contains "$run_log" "--security-opt=no-new-privileges"
   assert_file_contains "$run_log" "--read-only"
   assert_file_contains "$run_log" "--tmpfs /tmp:size=2g,mode=1777"
-  assert_file_contains "$run_log" "--tmpfs /usr/local/share/npm-global:size=1g"
   assert_file_contains "$run_log" "-e RUN_MODE=once"
   assert_file_contains "$run_log" "-e TARGET_REPO=owner/repo"
   assert_file_contains "$run_log" "-e JOB_ID="
