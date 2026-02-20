@@ -203,13 +203,14 @@ spawn_worker() {
     -v "${token_file}:/run/secrets/agent_github_token:ro"
   )
 
-  # Mount codex subscription auth into the worker's home if available.
-  # Pre-create the .codex dir in the job home so Docker doesn't fail when
-  # resolving the file-mount target inside the /home/node bind-mount.
+  # Copy codex subscription auth into the worker's home if available.
+  # Docker Desktop on macOS (virtiofs) can't nest a file mount inside a
+  # bind mount with --read-only, so we copy instead of mounting.
   local codex_auth_file="${CODEX_AUTH_FILE:-}"
   if [ -n "$codex_auth_file" ] && [ -f "$codex_auth_file" ]; then
     mkdir -p "${job_home}/.codex"
-    docker_run_args+=( -v "${codex_auth_file}:/home/node/.codex/auth.json:ro" )
+    cp "$codex_auth_file" "${job_home}/.codex/auth.json"
+    chmod 600 "${job_home}/.codex/auth.json"
   fi
 
   docker_run_args+=(
