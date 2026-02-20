@@ -201,6 +201,15 @@ spawn_worker() {
     -v "${job_workspace}:/workspace"
     -v "${job_home}:/home/node"
     -v "${token_file}:/run/secrets/agent_github_token:ro"
+  )
+
+  # Mount codex subscription auth into the worker's home if available.
+  local codex_auth_file="${CODEX_AUTH_FILE:-}"
+  if [ -n "$codex_auth_file" ] && [ -f "$codex_auth_file" ]; then
+    docker_run_args+=( -v "${codex_auth_file}:/home/node/.codex/auth.json:ro" )
+  fi
+
+  docker_run_args+=(
     -e RUN_MODE=once
     -e TARGET_REPO="${repo}"
     -e WORKSPACE_ROOT=/workspace
