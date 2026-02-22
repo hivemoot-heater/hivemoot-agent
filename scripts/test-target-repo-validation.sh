@@ -55,4 +55,20 @@ assert_fails_with \
   "Invalid TARGET_REPO: not-a-repo. Expected owner/repo." \
   env -u WATCH_MENTIONS TARGET_REPO=not-a-repo bash scripts/run-loop.sh
 
+assert_fails_with \
+  "Invalid TARGET_REPO: ../evil. Expected owner/repo." \
+  env TARGET_REPO=../evil bash scripts/run-once.sh
+
+assert_fails_with \
+  "Invalid TARGET_REPO: ../evil. Expected owner/repo." \
+  env TARGET_REPO=../evil bash scripts/run-multi.sh
+
+assert_fails_with \
+  "Invalid TARGET_REPO: ../evil. Expected owner/repo." \
+  env -u WATCH_MENTIONS TARGET_REPO=../evil bash scripts/run-loop.sh
+
+assert_fails_with \
+  "Invalid TARGET_REPO: .hidden-org/repo. Expected owner/repo." \
+  env TARGET_REPO=.hidden-org/repo bash scripts/run-once.sh
+
 echo "PASS: TARGET_REPO validation checks"
