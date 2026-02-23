@@ -877,6 +877,7 @@ You are resuming a prior session for this mention thread. Some data in your cont
       # Linux-specific; consistent with the /run/secrets/* entries above.
       "Bash(cat /proc/*/environ)"
       "Bash(* /proc/*/environ)"
+      "Read(/proc/*/environ)"
     )
 
     # In task mode, use text output format so the log IS the answer text.
