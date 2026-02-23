@@ -71,4 +71,23 @@ assert_fails_with \
   "Invalid TARGET_REPO: .hidden-org/repo. Expected owner/repo." \
   env TARGET_REPO=.hidden-org/repo bash scripts/run-once.sh
 
+# Note: the trailing period in the error message joins the target value, so
+# owner/.. renders as owner/... in the expected string (two dots + message period),
+# and owner/. renders as owner/.. (one dot + message period).
+assert_fails_with \
+  "Invalid TARGET_REPO: owner/... Expected owner/repo." \
+  env TARGET_REPO=owner/.. bash scripts/run-once.sh
+
+assert_fails_with \
+  "Invalid TARGET_REPO: owner/... Expected owner/repo." \
+  env TARGET_REPO=owner/.. bash scripts/run-multi.sh
+
+assert_fails_with \
+  "Invalid TARGET_REPO: owner/... Expected owner/repo." \
+  env -u WATCH_MENTIONS TARGET_REPO=owner/.. bash scripts/run-loop.sh
+
+assert_fails_with \
+  "Invalid TARGET_REPO: owner/.. Expected owner/repo." \
+  env TARGET_REPO=owner/. bash scripts/run-once.sh
+
 echo "PASS: TARGET_REPO validation checks"

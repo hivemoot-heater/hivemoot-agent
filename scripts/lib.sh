@@ -134,6 +134,16 @@ validate_target_repo() {
     echo "Invalid TARGET_REPO: ${target_repo}. Expected owner/repo." >&2
     exit 1
   fi
+
+  # Reject . and .. as the repo component (path traversal protection).
+  # The regex allows them because [A-Za-z0-9_.-]+ matches a lone dot,
+  # but they are not valid GitHub repo names and create spurious directories
+  # when interpolated into cache paths (e.g. ${cache}/${owner}/${repo}/mirror.git).
+  local _repo_part="${target_repo#*/}"
+  if [ "$_repo_part" = "." ] || [ "$_repo_part" = ".." ]; then
+    echo "Invalid TARGET_REPO: ${target_repo}. Expected owner/repo." >&2
+    exit 1
+  fi
 }
 
 validate_workspace_root() {
