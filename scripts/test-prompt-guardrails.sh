@@ -53,12 +53,17 @@ assert_contains "$run_once" "prompt=\"\${system_prompt}"
 assert_contains "$run_once" "cmd+=(--append-system-prompt \"\$system_prompt\")"
 assert_contains "$run_once" "claude_fresh_cmd+=(--disallowedTools \"\${claude_disallowed_tools[@]}\")"
 assert_contains "$run_once" "cmd+=(--disallowedTools \"\${claude_disallowed_tools[@]}\")"
-# Shell-builtin env dumps — each must be denied individually.
+# Shell-builtin env dumps — bare form and wildcard form must both be denied.
 assert_contains "$run_once" "\"Bash(env)\""
+assert_contains "$run_once" "\"Bash(env *)\""
 assert_contains "$run_once" "\"Bash(printenv)\""
+assert_contains "$run_once" "\"Bash(printenv *)\""
 assert_contains "$run_once" "\"Bash(set)\""
+assert_contains "$run_once" "\"Bash(set *)\""
 assert_contains "$run_once" "\"Bash(export)\""
+assert_contains "$run_once" "\"Bash(export *)\""
 assert_contains "$run_once" "\"Bash(declare)\""
+assert_contains "$run_once" "\"Bash(declare *)\""
 # Mounted secrets reads.
 assert_contains "$run_once" "\"Bash(cat /run/secrets/*)\""
 assert_contains "$run_once" "\"Bash(* /run/secrets/*)\""
