@@ -209,6 +209,7 @@ RUN_MODE=loop WATCH_MENTIONS=1 docker compose up hivemoot-agent
 
 Requires `TARGET_REPO` and user tokens (not installation tokens). Additional settings:
 - `WATCH_POLL_INTERVAL` — seconds between mention polls (default: 300)
+- `WATCH_REVIEW_REQUESTS` — set `1` to also watch for PR review requests and dispatch review jobs (requires `WATCH_MENTIONS=1`)
 - `SESSION_RESUME` — set `0` to disable session resume and always start fresh runs (default: `1`)
 - `SESSION_RESUME_MAX_IDLE_HOURS` — reset stale sessions after this idle window (default: `12`)
 - `SESSION_RESUME_MAX_AGE_HOURS` — reset sessions older than this total age window (default: `24`)
@@ -280,6 +281,7 @@ HEALTH_REPORT_URL=https://your-backend.example.com/api/agent-health
 | `HEALTH_REPORT_TIMEOUT_SECS` | `10` | Per-request timeout |
 | `HEALTH_REPORT_MAX_RETRIES` | `2` | Retry attempts for 5xx/network errors |
 | `HEARTBEAT_INTERVAL_SECS` | `1800` | Controller periodic heartbeat cadence in seconds (`0` disables); default 30 min |
+| `HEALTH_REPORT_RUN_SUMMARY` | `0` | Include agent run summary in health payloads (`0`=off, `1`=on). Enable only after the backend schema accepts `run_summary`. |
 
 **Failure behavior:**
 
