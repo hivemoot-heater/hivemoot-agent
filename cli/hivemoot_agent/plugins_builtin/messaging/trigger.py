@@ -69,7 +69,7 @@ class MessagingTrigger:
                     offset = max(offset, update_id + 1)
                     continue
 
-                if not allowed or chat_id not in allowed:
+                if allowed and chat_id not in allowed:
                     print(f"[trigger] deny: chat={chat_id}", file=sys.stderr, flush=True)
                     offset = max(offset, update_id + 1)
                     continue
