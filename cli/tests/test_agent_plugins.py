@@ -162,6 +162,37 @@ def test_autodiscover_none_valid():
 # ── Oneshot with AGENT_PLUGINS ───────────────────────────────────
 
 
+def test_oneshot_calls_on_job_started():
+    """Regression for #539: oneshot() must call on_job_started before subprocess."""
+    lifecycle: list[str] = []
+
+    class _TrackingPlugin(_FakePlugin):
+        def on_job_started(self, job, config):
+            lifecycle.append(f"started:{job.session_key}")
+
+        def on_job_finished(self, job, result, config):
+            lifecycle.append(f"finished:{job.session_key}")
+
+    _setup_registry(_TrackingPlugin("alpha"))
+
+    mock_proc = MagicMock()
+    mock_proc.returncode = 0
+    mock_proc.stdout = '{"type":"result","result":"done"}\n'
+    mock_proc.stderr = ""
+
+    env = {"AGENT_PLUGINS": "alpha", "AGENT_PROVIDER": "claude"}
+
+    with patch("subprocess.run", return_value=mock_proc):
+        with patch.dict(os.environ, env, clear=False):
+            engine = Engine()
+            code = engine.oneshot(prompt="Do something")
+
+    assert code == 0
+    assert lifecycle == ["started:oneshot", "finished:oneshot"], (
+        f"Expected started then finished lifecycle, got: {lifecycle}"
+    )
+
+
 def test_oneshot_with_plugins():
     """Oneshot uses plugin system prompt when AGENT_PLUGINS is set."""
     _setup_registry(_FakePlugin("alpha"))

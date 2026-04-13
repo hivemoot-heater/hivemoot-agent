@@ -273,6 +273,9 @@ class Engine:
             self._plugins = plugins
             if not self._setup_plugins(plugins):
                 return 1
+            # Mirror run_agent() contract: call on_job_started before subprocess.
+            for name, plugin in plugins.items():
+                plugin.on_job_started(job, registry.config_for(name))
 
         # Build system prompt — after setup() so plugins have real
         # state (cloned repos, resolved branches, etc.).
