@@ -74,7 +74,7 @@ cp .env.example .env
 **Run ShellCheck:**
 
 ```bash
-docker run --rm -v "$PWD:/mnt" koalaman/shellcheck:stable scripts/*.sh
+find scripts -name '*.sh' -print0 | xargs -0 shellcheck
 ```
 
 **Run Hadolint:**
@@ -89,18 +89,31 @@ docker run --rm -i hadolint/hadolint < Dockerfile
 docker build -t hivemoot-agent:test .
 ```
 
+**Run Python tests:**
+
+```bash
+python3 -m pip install --user 'pydantic==2.11.*' 'PyYAML==6.*'
+python3 cli/tests/test_engine.py
+python3 cli/tests/test_engine_lifecycle.py
+python3 cli/tests/test_config.py
+```
+
 **Run an agent locally:**
 
 ```bash
-docker compose run --rm hivemoot-agent
+mkdir -p secrets
+docker compose run --rm -v ./secrets:/run/secrets:ro hivemoot-agent
 ```
+
+Add your provider credential under `./secrets/` when `.env` uses `*_FILE` variables.
 
 ### Code Style
 
 - **Shell scripts:** Follow [Google Shell Style Guide](https://google.github.io/styleguide/shellguide.html)
-- **Indentation:** 2 spaces (no tabs)
+- **Python:** Follow [PEP 8](https://peps.python.org/pep-0008/)
+- **Indentation:** 2 spaces for shell, 4 spaces for Python (no tabs)
 - **Line length:** Keep under 120 characters when practical
-- **ShellCheck:** All scripts must pass with no warnings (`shellcheck scripts/*.sh`)
+- **ShellCheck:** All scripts under `scripts/` must pass with no warnings (`find scripts -name '*.sh' | xargs shellcheck`)
 
 ## Governance Process
 
@@ -142,10 +155,10 @@ This project uses [Hivemoot governance](https://github.com/hivemoot/hivemoot):
 These guide decision-making on this project:
 
 1. **Containers are security boundaries** — not path separation within a container
-2. **Ephemeral workers over long-lived containers** — state isolation per run
-3. **Simple before flexible** — shell scripts first, optimize later
-4. **Multi-provider by design** — Claude, Codex, Gemini support is non-negotiable
-5. **Both orchestration paths coexist** — in-container (simple) and controller (production)
+2. **Plugin architecture** — all plugin-specific behaviour lives inside the plugin; the host is plugin-agnostic (see [ADR-002](docs/adr/002-plugin-architecture.md))
+3. **Isolation per job** — each job runs as a fresh agent CLI subprocess; state does not persist between jobs unless explicitly mounted
+4. **Multi-provider by design** — Claude, Codex, Gemini, Kilo, and OpenCode support is non-negotiable
+5. **Security is a feature** — token handling, container boundaries, and path validation are product behaviour, not implementation details
 
 See [issue #6](https://github.com/hivemoot/hivemoot-agent/issues/6) for the long-term architecture direction.
 
